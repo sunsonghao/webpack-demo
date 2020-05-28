@@ -4,7 +4,15 @@ const MiniCssTextPlugin = require('mini-css-extract-plugin');
 // commonjs 规范,导出配置项
 module.exports = {
   mode: 'none',
-  entry: './main.js',
+  // webpack在寻找相对文件路径时，会以context为根目录(绝对路径,默认为CWD)。也可以配置在启动命令后
+  context: path.resolve(__dirname, 'src'),
+  // entry: './main.js',
+  /* entry: {
+    main: './main.js' // key是chunk的名称，描述chunk的入口
+  }, */
+  // 动态入口, 设置为一个函数动态返回配置
+  // entry: () =>'./main.js', // 同步函数
+  entry: () => new Promise((resolve) => resolve(['./main.js'])), // 异步函数
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, './dist')
@@ -30,6 +38,7 @@ module.exports = {
     ]
   },
   plugins: [new MiniCssTextPlugin({
-    filename: '[name]_[contenthash:8].css'
+    // filename: '[name]_[contenthash:8].css'
+    filename: '[name].css'
   })]
 }
