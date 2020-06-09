@@ -228,6 +228,7 @@ module.exports = {
 
   },
 
+  // 数组中每一项都是要是用的plugin实例, plugin需要的参数通过构造函数传入,难点在于掌握 Plugin 本身提供的配置项
   plugins: [new MiniCssTextPlugin({
     // filename: '[name]_[contenthash:8].css'
     filename: '[name].css'
