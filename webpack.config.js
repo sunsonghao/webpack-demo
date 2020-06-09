@@ -190,6 +190,44 @@ module.exports = {
       return /jquery|chartjs/.test(content);
     },
   },
+
+  // 配置webpack如何找寻模块对应的文件，wp内置js模块语法解析功能，默认采用标准里的解析规则，但也可以自己配置。
+  resolve: {
+    // 原路径映射为新的导入路径, 还支持 $ 符号来缩小范围到只命中以关键字结尾的导入语句：
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+      // 命中以vue结尾的导入语句 import 'vue' 会替换成import 'vue/dist/vue.esm.js'
+      // 'vue$': 'vue/dist/vue.esm.js',
+    },
+    /* 
+    有一些第三方模块会针对不同环境提供几分代码。 例如分别提供采用 ES5 和 ES6 的2份代码，这2份代码的位置写在 package.json 文件里，如下：
+    {
+      "jsnext:main": "es/index.js",// 采用 ES6 语法的代码入口文件
+      "main": "lib/index.js" // 采用 ES5 语法的代码入口文件
+    }
+    Webpack 会根据 mainFields 的配置去决定优先采用那份代码，mainFields 默认如下：
+    mainFields: ['browser', 'main']
+    
+    Webpack 会按照数组里的顺序去package.json 文件里寻找，只会使用找到的第一个。
+    假如你想优先采用 ES6 的那份代码，可以这样配置：
+    */
+    mainFields: ['jsnext:main', 'browser', 'main'],
+    // 导入语句没带后缀时，Webpack 会自动带上后缀后去尝试访问文件是否存在。 
+    // extensions 用于配置在尝试过程中用到的后缀列表
+    extensions: ['.js', '.vue', '.json'],
+
+    // 配置webpack去哪些目录下查找  第三方  模块，默认node_modules。
+    // 当模块会被其他模块大量引用，其他模块分布不均，导入路径不相同，可以如下配置：只用import 'button', 相当于import '/src/components/button'
+    modules:['./src/components','node_modules'],
+
+    // 配置描述第三方模块的文件名称，即 package.json 文件
+    descriptionFiles: ['package.json'],
+    enforceExtension: false, // 导入语句是否必须带文件后缀
+    // 只对 node_modules 下的模块生效,通常搭配 enforceExtension 使用，在 enforceExtension:true 时，因为安装的第三方模块中大多数导入语句没带文件后缀， 所以这时通过配置 enforceModuleExtension:false 来兼容第三方模块
+    enforceModuleExtension: false
+
+  },
+
   plugins: [new MiniCssTextPlugin({
     // filename: '[name]_[contenthash:8].css'
     filename: '[name].css'
