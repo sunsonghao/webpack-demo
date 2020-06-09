@@ -15,7 +15,7 @@ module.exports = {
   // 动态入口, 设置为一个函数动态返回配置
   // entry: () =>'./main.js', // 同步函数
   entry: () => new Promise((resolve) => resolve(['./main.js'])), // 异步函数
-  
+
   // https://webpack.js.org/configuration/output/
   output: {
     // filename: 'bundle.js',
@@ -94,13 +94,59 @@ module.exports = {
 
   },
 
+  // module配置如何处理模块
   module: {
-    // 一组规则，告诉webpack遇到哪些文件用哪些loader加载和转换
+    // 配置模块的读取和解析规则，一组规则，告诉webpack遇到哪些文件用哪些loader加载和转换
+    // 配置一项rules大致通过以下几种方式：
+      /* 
+        1条件匹配：通过 test 、 include 、 exclude 三个配置项来命中 Loader 要应用规则的文件。
+        2应用规则：对选中后的文件通过 use 配置项来应用 Loader，可以只应用一个 Loader 或者按照从后往前的顺序应用一组 Loader，同时还可以分别给 Loader 传入参数。
+        3重置顺序：一组 Loader 的执行顺序默认是从右到左执行，通过 enforce 选项可以让其中一个 Loader 的执行顺序放到最前或者最后。
+      */
     rules: [
       {
+        test: /\.js$/,
+        // use: ['babel-loader?cacheDirectory'], // 参数，缓存babel编译结果，加快重新编译速度
+        use: [
+          {
+            loader:'babel-loader',
+            options:{
+              cacheDirectory:true,
+            },
+            // enforce:'post' 的含义是把该 Loader 的执行顺序放到最后
+            // enforce 的值还可以是 pre，代表把 Loader 的执行顺序放到最前面
+            // enforce: 'post'
+          },
+        ],
+    
+        /* 
+        因为 Webpack 是以模块化的 JavaScript 文件为入口，所以内置了对模块化 JavaScript 的解析功能，支持 AMD、CommonJS、SystemJS、ES6。 parser 属性可以更细粒度的配置哪些模块语法要解析哪些不解析，
+        和 noParse 配置项的区别在于 parser 可以精确到语法层面， 而 noParse 只能控制哪些文件不被解析
+        */
+        parser: {
+          amd: false, // 禁用 AMD
+          commonjs: false, // 禁用 CommonJS
+          system: false, // 禁用 SystemJS
+          harmony: false, // 禁用 ES6 import/export
+          requireInclude: false, // 禁用 require.include
+          requireEnsure: false, // 禁用 require.ensure
+          requireContext: false, // 禁用 require.context
+          browserify: false, // 禁用 browserify
+          requireJs: false, // 禁用 requirejs
+        },
+        include: path.resolve(__dirname, 'src') // 只命中src下的文件，加快webpack检索速度
+      },
+      {
+        // 对非文本文件采用 file-loader 加载
+        test: /\.(gif|png|jpe?g|eot|woff|ttf|svg|pdf)$/,
+        use: ['file-loader'],
+      },
+      {
         test: /\.css$/,
+        // 排除 node_modules 目录下的文件
+        exclude: path.resolve(__dirname, 'node_modules'),
         // 在引用css的地方require('style-loader!css-loader?minimize!.main.css')
-        // 或者
+        // 或者 多参数时使用Object来描述
         /* use: ['style-loader', {
           loader: 'css-loader',
           options: {
@@ -111,8 +157,38 @@ module.exports = {
         use: [{
           loader: MiniCssTextPlugin.loader,
         }, 'css-loader']
+      },
+      // test include exclude 这三个命中文件的配置项除了正则还支持数组，数组每一项是 或 的关系，即符合任意一项即命中
+      {
+        test:[
+          /\.jsx?$/,
+          /\.tsx?$/
+        ],
+        include:[
+          path.resolve(__dirname, 'src'),
+          path.resolve(__dirname, 'tests'),
+        ],
+        exclude:[
+          path.resolve(__dirname, 'node_modules'),
+          path.resolve(__dirname, 'bower_modules'),
+        ]
       }
-    ]
+    ],
+    
+    
+    /* 
+    noParse 配置项可以让 Webpack 忽略对部分没采用模块化的文件的递归解析和处理，这样做的好处是能提高构建性能。 原因是一些库例如 jQuery 、ChartJS 它们庞大又没有采用模块化标准，
+    让 Webpack 去解析这些文件耗时又没有意义。
+    noParse 是可选配置项，类型需要是 RegExp、[RegExp]、function 其中一个。
+    */
+    // noParse: /jquery|chartjs/,
+    // 被忽略掉的文件里不应该包含 import 、 require 、 define 等模块化语句
+    // 使用函数，从 Webpack 3.0.0 开始支持
+    noParse: (content)=> {
+      // content 代表一个模块的文件路径
+      // 返回 true or false
+      return /jquery|chartjs/.test(content);
+    },
   },
   plugins: [new MiniCssTextPlugin({
     // filename: '[name]_[contenthash:8].css'
