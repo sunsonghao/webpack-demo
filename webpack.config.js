@@ -9,18 +9,18 @@ module.exports = {
   context: path.resolve(__dirname, 'src'),
 
   // entry: './main.js',
-  /* entry: {
+  entry: {
     main: './main.js' // key是chunk的名称，描述chunk的入口
-  }, */
+  },
   // 动态入口, 设置为一个函数动态返回配置
   // entry: () =>'./main.js', // 同步函数
-  entry: () => new Promise((resolve) => resolve(['./main.js'])), // 异步函数
+  // entry: () => new Promise((resolve) => resolve(['./main.js'])), // 异步函数
 
   // https://webpack.js.org/configuration/output/
   output: {
-    // filename: 'bundle.js',
+    filename: 'bundle.js',
     // 借助模板和变量，[id | name | hash(唯一标识id的hash) | chunkhash]
-    filename: '[name].js',
+    // filename: '[name].js',
     // 非入口(运行过程中产生，使用 CommonChunkPlugin、使用 import('path/to/module') 动态加载等时)chunk在输出时的文件名称
     chunkFilename: '[id].js',
     // 绝对路径
@@ -46,7 +46,7 @@ module.exports = {
         // 使用库的方法
         require('library-name-in-npm')===1;
       */
-    libraryTarget: 'this', // 配置以何种方式导出库，枚举类型，如下：
+    libraryTarget: 'var', // 配置以何种方式导出库，枚举类型，如下：
       /* 
         var(默认), 编写的库将通过var被赋值给library指定名称的变量。
           // webpack输出代码
@@ -125,7 +125,7 @@ module.exports = {
         */
         parser: {
           amd: false, // 禁用 AMD
-          commonjs: false, // 禁用 CommonJS
+          commonjs: true, // 禁用 CommonJS
           system: false, // 禁用 SystemJS
           harmony: false, // 禁用 ES6 import/export
           requireInclude: false, // 禁用 require.include
@@ -232,5 +232,75 @@ module.exports = {
   plugins: [new MiniCssTextPlugin({
     // filename: '[name]_[contenthash:8].css'
     filename: '[name].css'
-  })]
+  })],
+
+  // wds，实时预览通过注入到客户端的代理接收wds的指令来刷新页面。
+  devServer: {
+    // 配置模块热替换，wds默认发现文件更新自动刷新页面，开启后不刷新页面用新模块替换旧模块。
+    hot: true,
+    // 配置是否自动注入代理客户端到将运行在页面里的 Chunk 里去，默认自动注入
+    // 关闭 inline，wds将无法直接控制要开发的网页。这时它通过 iframe 的方式去运行要开发的网页，当构建完变化后的代码时通过刷新 iframe 来实现实时预览。 
+    // 但这时你需要去 http://localhost:8080/webpack-dev-server/ 实时预览你的网页了
+    inline: true,
+
+    // 配置使用了 HTML5 History API 的单页应用。 这类单页应用要求服务器在针对任何命中的路由时都返回一个对应的 HTML 文件，例如在访问 http://localhost/user 
+    // 和 http://localhost/home 时都返回 index.html 文件， 浏览器端的 JavaScript 代码会从 URL 里解析出当前页面的状态，显示出对应的界面。
+    // 多个单页应用
+    // historyApiFallback: {
+		// 	rewrites: [
+    //     // 正则匹配命中的路由，以customer开头的都返回customer.html页面
+    //     { from: /^\/customer/, to: '/customer.html' },
+		// 		{ from: /.*/, to: path.posix.join('/', 'index.html') } // vue-cli中的配置
+		// 	]
+    // },
+    // 或者
+    // historyApiFallback: true, // 任何请求都返回index.html，适合只有一个html的文件
+
+    // 配置wds http服务器的文件根目录，默认为当前执行目录，通常是项目根目录。
+    // wds http服务暴露2类文件：本地文件和交给wds的构建结果，所以本地找不到构建结果。
+    // contentBase: false, // 关闭暴露本地文件（只能用于配置暴露本地文件）
+
+    // 配置在http响应中注入http响应头
+    headers: {
+      'X-sun': 'sh'
+    },
+
+    // Various Dev Server settings
+    // 想要局域网中的其它设备访问你本地的服务，可以在启动 DevServer 时带上 --host 0.0.0.0
+		host: '127.0.0.1', // can be overwritten by process.env.HOST // 172.23.204.45
+		port: 80, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    // autoOpenBrowser: true // 已改为open配置项，见最后一行
+    
+    // 配置一个白名单列表，只有 HTTP 请求的 HOST 在列表里才正常返回
+    allowedHosts: [
+      // 匹配单个域名
+      'host.com',
+      'sub.host.com',
+      // host2.com 和所有的子域名 *.host2.com 都将匹配
+      '.host2.com'
+    ],
+
+    // 配置是否关闭用于 DNS 重绑定的 HTTP 请求的 HOST 检查。 DevServer 默认只接受来自本地的请求，关闭后可以接受来自任何 HOST 的请求。 
+    // 它通常用于搭配 --host 0.0.0.0 使用，因为你想要其它设备访问你本地的服务，但访问时是直接通过 IP 地址访问而不是 HOST 访问，所以需要关闭 HOST 检查。
+    disableHostCheck: false,
+
+    // HTTP2 和 Service Worker 必须运行在 HTTPS 之上。 切换成 HTTPS 服务
+    https: false,
+    // 如果想用自己的证书,配置如下：
+    /* https: {
+      key: fs.readFileSync('path/to/server.key'),
+      cert: fs.readFileSync('path/to/server.crt'),
+      ca: fs.readFileSync('path/to/ca.pem')
+    } */
+
+    // 配置在客户端的日志等级,可取如下之一的值 none | error | warning | info。 默认为 info 级别，即输出所有类型的日志，设置成 none 可以不输出任何日志
+    clientLogLevel: 'info',
+
+    // 配置是否启用 gzip 压缩
+    compress: true,
+
+    // 在 DevServer 启动且第一次构建完时自动用你系统上默认的浏览器去打开要开发的网页。 
+    // 同时还提供 devServer.openPage 配置项用于打开指定 URL 的网页
+    open: true
+  }
 }
