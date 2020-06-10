@@ -302,5 +302,54 @@ module.exports = {
     // 在 DevServer 启动且第一次构建完时自动用你系统上默认的浏览器去打开要开发的网页。 
     // 同时还提供 devServer.openPage 配置项用于打开指定 URL 的网页
     open: true
+  },
+
+  /* 其他常用配置项 */
+
+  // 配置项让 Webpack 构建出针对不同运行环境的代码
+    /* web	针对浏览器 (默认)，所有代码都集中在一个文件里
+    node	针对 Node.js，使用 require 语句加载 Chunk 代码
+    async-node	针对 Node.js，异步加载 Chunk 代码
+    webworker	针对 WebWorker
+    electron-main	针对 Electron 主线程
+    electron-renderer	针对 Electron 渲染线程 */
+  target: 'web',
+
+  // 配置wp如何生成sourceMap, 默认false
+  // https://webpack.js.org/configuration/devtool/#production
+  devtool: 'source-map',
+
+  // wp监听模式， wp的watch默认是关闭的，wds的监听默认是开启的
+  watch: true,
+  // 监听模式运行时的参数
+  // 在开启监听模式时，才有意义
+  watchOptions: {
+    // 不监听的文件或文件夹，支持正则匹配
+    // 默认为空
+    ignored: /node_modules/,
+    // 监听到变化发生后会等300ms再去执行动作，防止文件更新太快导致重新编译频率太高
+    // 默认为 300ms  
+    aggregateTimeout: 300,
+    // 判断文件是否发生变化是通过不停的去询问系统指定文件有没有变化实现的
+    // 默认每隔1000毫秒询问一次
+    poll: 1000
+  },
+
+  // 该配置项常用于加载本地的 Loader
+  // 告诉 Webpack 如何去寻找 Loader，因为在使用 Loader 时是通过其包名称去引用的， 
+  // Webpack 需要根据配置的 Loader 包名去找到 Loader 的实际代码，以调用 Loader 去处理源文件
+  resolveLoader:{
+    // 去哪个目录下寻找 Loader
+    modules: ['node_modules'],
+    // 入口文件的后缀
+    extensions: ['.js', '.json'],
+    // 指明入口文件位置的字段
+    mainFields: ['loader', 'main']
+  },
+
+  // 告诉 Webpack JavaScript 运行环境已经内置了那些全局变量，针对这些全局变量不用打包进代码中而是直接使用全局变量
+  externals: {
+    // 把导入语句里的 jquery 替换成运行环境里的全局变量 jQuery
+    // jquery: 'jQuery'
   }
 }
