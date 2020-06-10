@@ -349,7 +349,7 @@ module.exports = {
 
   // 告诉 Webpack JavaScript 运行环境已经内置了那些全局变量，针对这些全局变量不用打包进代码中而是直接使用全局变量
   externals: {
-    // 把导入语句里的 jquery 替换成运行环境里的全局变量 jQuery
+    // 把导入语句里的 jquery 替换成运行环境里的全局变量 jQuery, jq引入可以用providerPlugin或者exposePlugin
     // jquery: 'jQuery'
   }
 }
