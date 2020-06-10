@@ -7,6 +7,7 @@ module.exports = {
   entry: ['./app/entry1', './app/entry2'], // 只有1个入口，入口有2个文件
   entry: { // 有2个入口
     a: './app/entry-a',
+  // value如果是数组，数组中的文件一般是没有相互依赖关系的，但是又处于某些原因需要将它们打包在一起
     b: ['./app/entry-b1', './app/entry-b2']
   },
 
