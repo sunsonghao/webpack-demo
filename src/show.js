@@ -1,4 +1,4 @@
-function show(content) {
+const show = (content) => {
   document.querySelector("#app").innerText = content;
 }
 
