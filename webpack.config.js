@@ -146,6 +146,10 @@ module.exports = {
         use: ['file-loader'],
       },
       {
+        test: /\.(scss|sass)$/,
+        use: ['style-loader', {loader: 'css-loader'}, 'sass-loader']
+      },
+      {
         test: /\.css$/,
         // 排除 node_modules 目录下的文件
         exclude: path.resolve(__dirname, 'node_modules'),

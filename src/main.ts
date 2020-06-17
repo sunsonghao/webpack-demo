@@ -1,5 +1,5 @@
 // 不认识css文件，需要loader解析
-require('./main.css');
+require('./main.scss');
 const show = require('./show');
 class Point {
   x: number;
