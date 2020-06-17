@@ -13,7 +13,7 @@
   // Babel 在把 ES6 代码转换成 ES5 代码时通常需要一些 ES5 写的辅助函数来完成新语法的实现,每个使用了某个新语法的文件可能都会被
   // 注入辅助文件，transform-runtime 的作用在于不把辅助函数内容注入到文件里，而是注入一条导入语句：
   // var xxx = require('babel-runtime/helpers/xxx')到编译后的代码里, 该语句又需要@babel/runtime, 所以需要在dependencies中添加依赖。
-  "plugins": ["transform-runtime"],
+  "plugins": ["@babel/plugin-transform-runtime"],
 
   /* presets 属性告诉 Babel 要转换的源码使用了哪些新的语法特性，一个 Presets 对一组新语法特性提供支持，多个 Presets 可以叠加。 
   Presets 其实是一组 Plugins 的集合，每一个 Plugin 完成一个新语法的转换工作。 */
