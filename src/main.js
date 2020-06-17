@@ -41,5 +41,41 @@ let content = `
     想自定义寻找依赖模块时的策略，配置 resolve。
     想自定义解析和转换文件的策略，配置 module，通常是配置 module.rules 里的 Loader。
     其它的大部分需求可能要通过 Plugin 去实现，配置 plugin。
+
+  第3章 实战
+    使用新语言来开发项目：
+
+    3-1 使用 ES6 语言
+    3-2 使用 TypeScript 语言
+    3-3 使用 Flow 检查器
+    3-4 使用 SCSS 语言
+    3-5 使用 PostCSS
+    使用新框架来开发项目：
+
+    3-6 使用 React 框架
+    3-7 使用 Vue 框架
+    3-8 使用 Angular2 框架
+    用 Webpack 构建单页应用：
+
+    3-9 为单页应用生成 HTML
+    3-10 管理多个单页应用
+    用 Webpack 构建不同运行环境的项目：
+
+    3-11 构建同构应用
+    3-12 构建 Electron 应用
+    3-13 构建 Npm 模块
+    3-14 构建离线应用
+    Webpack 结合其它工具搭配使用，各取所长：
+
+    3-15 搭配 Npm Script
+    3-16 检查代码
+    3-17 通过 Node.js API 启动 Webpack
+    3-18 使用 Webpack Dev Middleware
+    用 Webpack 加载特殊类型的资源：
+
+    3-19 加载图片
+    3-20 加载SVG
+    3-21 加载 Source Map
+    3-22 实战总结
   `
 show(content);
