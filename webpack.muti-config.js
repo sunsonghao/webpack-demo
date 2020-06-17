@@ -45,7 +45,7 @@ module.exports = function (env = {}, argv) {
     mode: 'none',
     context: path.resolve(__dirname, 'src'),
     entry: {
-      main: './main.js'
+      main: './main.ts'
     },
     output: {
       // 把所有依赖的模块合并输出到一个 bundle.js 文件
@@ -55,6 +55,10 @@ module.exports = function (env = {}, argv) {
     },
     module: {
       rules: [
+        {
+          test: /\.ts$/,
+          use: 'awesome-typescript-loader'
+        },
         {
           test: /\.css$/,
           use: ['style-loader', 'css-loader']
@@ -70,6 +74,9 @@ module.exports = function (env = {}, argv) {
           exclude: path.resolve(__dirname, 'node_modules')
         }
       ]
+    },
+    resolve: {
+      extensions: ['ts', '.js', '.vue', '.json'],
     },
     plugins: plugins,
     devtool: isProduction ? undefined : 'source-map'
