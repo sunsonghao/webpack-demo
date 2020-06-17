@@ -1,0 +1,29 @@
+/* 
+  es6转换成支持良好的es5需要做2件事：
+    es6语法用es5实现;
+    给新的api注入polyfill, 例如fetch API和Promise, 需要注入对应的polyfill才能在低版本的浏览器运行
+
+  http://www.ruanyifeng.com/blog/2016/01/babel.html
+  babel可以完成上面的事情，执行编译的过程中会从根目录下的.babelrc文件中读取配置。 
+*/
+
+{
+  // plugins告诉 Babel 要使用哪些插件，插件可以控制如何转换代码
+
+  // Babel 在把 ES6 代码转换成 ES5 代码时通常需要一些 ES5 写的辅助函数来完成新语法的实现,每个使用了某个新语法的文件可能都会被
+  // 注入辅助文件，transform-runtime 的作用在于不把辅助函数内容注入到文件里，而是注入一条导入语句：
+  // var xxx = require('babel-runtime/helpers/xxx')到编译后的代码里, 该语句又需要@babel/runtime, 所以需要在dependencies中添加依赖。
+  "plugins": ["transform-runtime"],
+
+  /* presets 属性告诉 Babel 要转换的源码使用了哪些新的语法特性，一个 Presets 对一组新语法特性提供支持，多个 Presets 可以叠加。 
+  Presets 其实是一组 Plugins 的集合，每一个 Plugin 完成一个新语法的转换工作。 */
+  // presets包括：
+  //   写入标准的, es2015/es2016/es2017 < env,
+  //   社区提出来未被写入标准的, stage0(愿望) > stage1(可能被采纳) > stage2(被起草，将会被纳入标准) > stage3(已定稿，厂商支持) > stage4(来年加入标准) 
+  //   与标准无关的， babel-preset-react
+  "presets": ["@babel/preset-env"]
+}
+
+/* 
+  接入到webpack: rules: babel-loader, 安装依赖babel/core、babel-loader、babel/presets-env
+*/
