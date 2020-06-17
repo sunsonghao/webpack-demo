@@ -2,7 +2,9 @@
 require('./main.css');
 const show = require('./show');
 class Point {
-  constructor (x, y) {
+  x: number;
+  y: number;
+  constructor (x:any, y:any) {
     this.x = x;
     this.y = y;
   }

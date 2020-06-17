@@ -10,7 +10,7 @@ module.exports = {
 
   // entry: './main.js',
   entry: {
-    main: './main.js' // key是chunk的名称，描述chunk的入口
+    main: './main.ts' // key是chunk的名称，描述chunk的入口
   },
   // 动态入口, 设置为一个函数动态返回配置
   // entry: () =>'./main.js', // 同步函数
@@ -104,6 +104,10 @@ module.exports = {
         3重置顺序：一组 Loader 的执行顺序默认是从右到左执行，通过 enforce 选项可以让其中一个 Loader 的执行顺序放到最前或者最后。
       */
     rules: [
+      {
+        test: /\.ts$/,
+        use: ['awesome-typescript-loader']
+      },
       {
         test: /\.js$/,
         // use: ['babel-loader?cacheDirectory'], // 参数，缓存babel编译结果，加快重新编译速度
@@ -214,7 +218,7 @@ module.exports = {
     mainFields: ['jsnext:main', 'browser', 'main'],
     // 导入语句没带后缀时，Webpack 会自动带上后缀后去尝试访问文件是否存在。 
     // extensions 用于配置在尝试过程中用到的后缀列表
-    extensions: ['.js', '.vue', '.json'],
+    extensions: ['ts', '.js', '.vue', '.json'],
 
     // 配置webpack去哪些目录下查找  第三方  模块，默认node_modules。
     // 当模块会被其他模块大量引用，其他模块分布不均，导入路径不相同，可以如下配置：只用import 'button', 相当于import '/src/components/button'
