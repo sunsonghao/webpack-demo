@@ -160,7 +160,9 @@ module.exports = {
           options: {
             // minimize: true
           }
-        }] */
+        },
+        'postcss-loader'
+        ] */
         // 将css提取到单独的css文件
         use: [{
           loader: MiniCssTextPlugin.loader,
