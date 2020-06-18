@@ -1,6 +1,9 @@
 const path = require('path');
 const MiniCssTextPlugin = require('mini-css-extract-plugin');
+const DefinePlugin = require('webpack/lib/DefinePlugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
+// 为单页应用生成html, https://github.com/gwuhaolin/web-webpack-plugin
+const { WebPlugin, AutoWebPlugin } = require('web-webpack-plugin')
 
 // commonjs 规范,导出配置项
 module.exports = {
@@ -253,7 +256,18 @@ module.exports = {
   plugins: [new MiniCssTextPlugin({
     // filename: '[name]_[contenthash:8].css'
     filename: '[name].css'
-  }), new VueLoaderPlugin()],
+  }), 
+  new VueLoaderPlugin(),
+  new WebPlugin({
+    template: './template.html', // HTML 模版文件所在的文件路径
+  filename: 'index.html' // 输出的 HTML 的文件名称
+  }),
+  new DefinePlugin({
+    'process.env': {
+      'NODE_ENV': JSON.stringify('production')
+    }
+  })
+  ],
 
   // wds，实时预览通过注入到客户端的代理接收wds的指令来刷新页面。
   devServer: {

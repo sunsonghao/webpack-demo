@@ -1,0 +1,26 @@
+<!-- 该文件描述了哪些资源需要被以何种方式加入到输出的 HTML 文件中 -->
+<html>
+  <head>
+  <!-- 资源链接 URL 字符串里问号前面的部分表示资源内容来自哪里，后面的 querystring 表示这些资源注入的方式。 -->
+  <!-- main 表示 CSS 代码来自名叫 main 的 Chunk 中，后面的 _inline 表示这些代码需要被内嵌到这个标签所在的位置.
+    _dist 只有在生产环境下才引入该资源
+    _dev 只有在开发环境下才引入该资源
+    _ie 只有IE浏览器才需要引入的资源，通过 [if IE]>resource<![endif] 注释实现
+    这些属性之间可以搭配使用，互不冲突。例如 app?_inline&_dist 表示只在生产环境下才引入该资源，并且需要内嵌到 HTML 里去
+  -->
+  <meta charset="UTF-8">
+  <!--注入 Chunk main 中的 CSS-->
+  <link rel="stylesheet" href="main?_inline">
+  <!--注入 google_analytics 中的 JavaScript 代码-->
+  <script src="./google_analytics.js?_inline"></script>
+  <!--异步加载 Disqus 评论-->
+  <script src="https://dive-into-webpack.disqus.com/embed.js" async></script>
+</head>
+<body>
+<div id="app"></div>
+<!--导入 Chunk main 中的 JS-->
+<script src="main"></script>
+<!--Disqus 评论容器-->
+<div id="disqus_thread"></div>
+</body>
+</html>
