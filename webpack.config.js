@@ -4,6 +4,36 @@ const DefinePlugin = require('webpack/lib/DefinePlugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 // 为单页应用生成html, https://github.com/gwuhaolin/web-webpack-plugin
 const { WebPlugin, AutoWebPlugin } = require('web-webpack-plugin')
+// 管理多个单页应用
+// 需要目录机构如下
+/* 
+  ├── pages
+  │   ├── index
+  │   │   ├── index.css // 该页面单独需要的 CSS 样式
+  │   │   └── index.js // 该页面的入口文件
+  │   └── login
+  │       ├── index.css
+  │       └── index.js
+  ├── common.css // 所有页面都需要的公共 CSS 样式
+  ├── google_analytics.js
+  ├── template.html
+  └── webpack.config.js
+
+  从目录结构中可以看成出下几点要求：
+    所有单页应用的代码都需要放到一个目录下，例如都放在 pages 目录下；
+    一个单页应用一个单独的文件夹，例如最后生成的 index.html 相关的代码都在 index 目录下，login.html 同理；
+    每个单页应用的目录下都有一个 index.js 文件作为入口执行文件。
+*/
+
+// 使用AutoWebPlugin自动寻找 pages 目录下的所有目录，把每一个目录看成一个单页应用
+const autoWebPlugin = new AutoWebPlugin('./src/pages', {
+  template: './template_muti.html', // HTML 模版文件所在的文件路径
+  // postEntrys: ['./common.css'],// 所有页面都依赖这份通用的 CSS 样式文件
+  // 提取出所有页面公共的代码
+  commonsChunk: {
+    name: 'common',// 提取出公共代码 Chunk 的名称
+  },
+})
 
 // commonjs 规范,导出配置项
 module.exports = {
@@ -12,19 +42,30 @@ module.exports = {
   // webpack在寻找相对文件路径时，会以context为根目录(绝对路径,默认为CWD)。也可以配置在启动命令后
   context: path.resolve(__dirname, 'src'),
 
+  // AutoWebPlugin 会为寻找到的所有单页应用，生成对应的入口配置，
+  // autoWebPlugin.entry 方法可以获取到所有由 autoWebPlugin 生成的入口配置
+  entry: autoWebPlugin.entry({
+    // 这里可以加入你额外需要的 Chunk 入口
+  }), /* 返回
+    {
+      "index":["./pages/index/index.js","./common.css"],
+      "login":["./pages/login/index.js","./common.css"]
+    }
+  */
+  
   // entry: './main.js',
-  entry: {
+  /* entry: {
     main: './main.js' // key是chunk的名称，描述chunk的入口
-  },
+  }, */
   // 动态入口, 设置为一个函数动态返回配置
   // entry: () =>'./main.js', // 同步函数
   // entry: () => new Promise((resolve) => resolve(['./main.js'])), // 异步函数
 
   // https://webpack.js.org/configuration/output/
   output: {
-    filename: 'bundle.js',
+    // filename: 'bundle.js',
     // 借助模板和变量，[id | name | hash(唯一标识id的hash) | chunkhash]
-    // filename: '[name].js',
+    filename: '[name].js',
     // 非入口(运行过程中产生，使用 CommonChunkPlugin、使用 import('path/to/module') 动态加载等时)chunk在输出时的文件名称
     chunkFilename: '[id].js',
     // 绝对路径
@@ -258,10 +299,11 @@ module.exports = {
     filename: '[name].css'
   }), 
   new VueLoaderPlugin(),
-  new WebPlugin({
+  /* new WebPlugin({
     template: './template.html', // HTML 模版文件所在的文件路径
-  filename: 'index.html' // 输出的 HTML 的文件名称
-  }),
+    filename: 'index.html' // 输出的 HTML 的文件名称
+  }), */
+  autoWebPlugin,
   new DefinePlugin({
     'process.env': {
       'NODE_ENV': JSON.stringify('production')

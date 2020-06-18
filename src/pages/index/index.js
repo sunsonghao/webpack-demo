@@ -1,0 +1,1 @@
+document.querySelector("#app").innerText = 'index单页应用';
