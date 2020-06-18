@@ -430,3 +430,15 @@ module.exports = {
     // jquery: 'jQuery'
   }
 }
+
+
+/* Npm Script 底层实现原理是通过调用 Shell 去运行脚本命令,还有一个重要的功能是能运行安装到项目目录里的 node_modules 里的可执行模块
+Webpack 只是一个打包模块化代码的工具，并没有提供任何任务管理相关的功能。可能需要多个任务才能完成。
+  定义三个不同的任务。
+  ’scripts’: {
+    ’dev’: ’webpack-dev-server --open’,
+    ’dist’: ’NODE_ENV=production webpack --config webpack_dist.config.js’,
+    ’pub’: ’npm run dist && rsync dist’
+  },
+  pub 先构建出用于发布到线上去的代码，再同步 dist 目录中的文件到发布系统(如何同步文件需根据你所使用的发布系统而定)。所以在开发完后需要发布时只需执行 npm run pub。
+ */
