@@ -1,5 +1,6 @@
 const path = require('path');
 const MiniCssTextPlugin = require('mini-css-extract-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 // commonjs 规范,导出配置项
 module.exports = {
@@ -10,7 +11,7 @@ module.exports = {
 
   // entry: './main.js',
   entry: {
-    main: './main.ts' // key是chunk的名称，描述chunk的入口
+    main: './main.js' // key是chunk的名称，描述chunk的入口
   },
   // 动态入口, 设置为一个函数动态返回配置
   // entry: () =>'./main.js', // 同步函数
@@ -105,6 +106,16 @@ module.exports = {
       */
     rules: [
       {
+        /* 
+        # Vue 框架运行需要的库
+          npm i -S vue
+        # 构建所需的依赖
+          npm i -D vue-loader css-loader vue-template-compiler
+        */
+        test: /\.vue$/,
+        use: 'vue-loader'
+      },
+      {
         test: /\.ts$/,
         use: ['awesome-typescript-loader']
       },
@@ -131,7 +142,7 @@ module.exports = {
           amd: false, // 禁用 AMD
           commonjs: true, // 禁用 CommonJS
           system: false, // 禁用 SystemJS
-          harmony: false, // 禁用 ES6 import/export
+          harmony: true, // 禁用 ES6 import/export
           requireInclude: false, // 禁用 require.include
           requireEnsure: false, // 禁用 require.ensure
           requireContext: false, // 禁用 require.context
@@ -242,7 +253,7 @@ module.exports = {
   plugins: [new MiniCssTextPlugin({
     // filename: '[name]_[contenthash:8].css'
     filename: '[name].css'
-  })],
+  }), new VueLoaderPlugin()],
 
   // wds，实时预览通过注入到客户端的代理接收wds的指令来刷新页面。
   devServer: {
@@ -278,7 +289,7 @@ module.exports = {
     // Various Dev Server settings
     // 想要局域网中的其它设备访问你本地的服务，可以在启动 DevServer 时带上 --host 0.0.0.0
 		host: '127.0.0.1', // can be overwritten by process.env.HOST // 172.23.204.45
-		port: 80, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+		port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     // autoOpenBrowser: true // 已改为open配置项，见最后一行
     
     // 配置一个白名单列表，只有 HTTP 请求的 HOST 在列表里才正常返回

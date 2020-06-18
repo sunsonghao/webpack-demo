@@ -1,12 +1,20 @@
+import Vue from 'vue';
+import hello from '@/components/hello.vue';
+
+new Vue({
+  el: "#app1",
+  render: h => h(hello)
+})
+
+
 // 不认识css文件，需要loader解析
 require('./main.scss');
 const show = require('./show');
+
 class Point {
-  x: number;
-  y: number;
-  constructor (x:any, y:any) {
-    this.x = x;
-    this.y = y;
+  constructor (x, y) {
+    this.x = 0;
+    this.y = 0;
   }
 }
 
