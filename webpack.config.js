@@ -1,6 +1,7 @@
 const path = require('path');
 const MiniCssTextPlugin = require('mini-css-extract-plugin');
 const DefinePlugin = require('webpack/lib/DefinePlugin');
+const DllReferencePlugin = require('webpack/lib/DllReferencePlugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 // 为单页应用生成html, https://github.com/gwuhaolin/web-webpack-plugin
 const { WebPlugin, AutoWebPlugin } = require('web-webpack-plugin')
@@ -46,16 +47,16 @@ module.exports = {
   // autoWebPlugin.entry 方法可以获取到所有由 autoWebPlugin 生成的入口配置
   /* 从入口出发找出文件中的导入语句，碰到导入语句：1找出对应的导入文件(resolve)，2然后根据对应后缀使用对应loader处理文件(module.rules)。
   这2步无可避免，但是可以减少其发生以提高构建速度。 */
-  entry: autoWebPlugin.entry({
+  /* entry: autoWebPlugin.entry({
     // 这里可以加入你额外需要的 Chunk 入口
-  }), /* 返回
+  }), */ /* 返回
     {
       "index":["./pages/index/index.js","./common.css"],
       "login":["./pages/login/index.js","./common.css"]
     }
   */
   
-  // entry: './main.js',
+  entry: './main.js',
   /* entry: {
     main: './main.js' // key是chunk的名称，描述chunk的入口
   }, */
@@ -341,11 +342,17 @@ module.exports = {
     filename: '[name].css'
   }), 
   new VueLoaderPlugin(),
-  /* new WebPlugin({
+  new WebPlugin({
     template: './template.html', // HTML 模版文件所在的文件路径
     filename: 'index.html' // 输出的 HTML 的文件名称
-  }), */
-  autoWebPlugin,
+  }),
+  // autoWebPlugin,
+  // 告诉 Webpack 使用了哪些动态链接库, 
+  // 还需要在html中导入依赖的动态链接库文件<script src="./dist/vue.dll.js"></script>
+  new DllReferencePlugin({
+    // 描述 vue 动态链接库的文件内容
+    manifest: require('./dist/vue.manifest.json')
+  }),
   new DefinePlugin({
     'process.env': {
       'NODE_ENV': JSON.stringify('production')

@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack --watch --devtool source-map --config webpack.config.js",
     "dev": "webpack-dev-server --devtool source-map --hot --config webpack.config.js",
-    "build:dist": "webpack --env.production  --config webpack.muti-config.js"
+    "build:dist": "webpack --env.production  --config webpack.muti-config.js",
+    "build:dll": "webpack --config webpack.dll.config.js"
   },
   "keywords": [],
   "author": "",
