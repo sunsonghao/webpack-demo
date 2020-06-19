@@ -195,10 +195,40 @@ module.exports = {
         },
         include: path.resolve(__dirname, 'src') // 只命中src下的文件，加快webpack检索速度
       },
+      // 加载图片资源
       {
         // 对非文本文件采用 file-loader 加载
         test: /\.(gif|png|jpe?g|eot|woff|ttf|svg|pdf)$/,
-        use: ['file-loader'],
+        use: ['file-loader'], // 可以把 JavaScript 和 CSS 中导入图片的语句替换成正确的地址，并同时把文件输出到对应的位置
+      },
+      // url-loader也可加载图片资源，它可以把文件内容base64编码后注入到js或者css中。
+      // 利用 url-loader 把网页需要用到的小图片资源注入到代码中去，以减少加载次数。因为在 HTTP/1 协议中，每加载一个资源都需要建立一次 HTTP 链接， 为了一个很小的图片而新建一次 HTTP 连接是不划算的。
+      
+      /* 除此之外，你还可以做以下优化：
+        通过 imagemin-webpack-plugin 压缩图片；
+        通过 webpack-spritesmith 插件制作雪碧图。
+      以上加载图片的方法同样适用于其它二进制类型的资源，例如 PDF、SWF 等等。 */
+      {
+        test: /\.bmp$/,
+        use: [{
+          loader: 'url-loader',
+          options: {
+            // 小于50KB的采用url-loader
+            limit: 1024 * 50,
+            // 否则采用fallback配置的loader,默认file-loader
+            fallback: 'file-loader'
+          }
+        }] // css转换后：background-image: url(data:image/png;base64,iVBORw01afer...); /* 结尾省略了剩下的 base64 编码后的数据 */
+      },
+      // 除了file/url-loader外，svg也可以使用raw-loader
+      // raw-loader 会直接返回 SVG 的文本内容，并且无法通过 CSS 去展示 SVG 的文本内容，因此采用本方法后无法在 CSS 中导入 SVG。 也就是说在 CSS 中不可以出现 background-image: url(./svgs/activity.svg) 这样的代码，因为 background-image: url(<svg>...</svg>) 是不合法的。
+      {
+        test: /\.svg$/,
+        use: [{
+          loader: 'raw-loader',
+          // 或者
+          // loader: 'svg-inline-loader' // 会分析 SVG 的内容，去除其中不必要的部分代码，以减少 SVG 的文件大小
+        }]
       },
       {
         test: /\.(scss|sass)$/,
