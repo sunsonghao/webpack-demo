@@ -44,6 +44,8 @@ module.exports = {
 
   // AutoWebPlugin 会为寻找到的所有单页应用，生成对应的入口配置，
   // autoWebPlugin.entry 方法可以获取到所有由 autoWebPlugin 生成的入口配置
+  /* 从入口出发找出文件中的导入语句，碰到导入语句：1找出对应的导入文件(resolve)，2然后根据对应后缀使用对应loader处理文件(module.rules)。
+  这2步无可避免，但是可以减少其发生以提高构建速度。 */
   entry: autoWebPlugin.entry({
     // 这里可以加入你额外需要的 Chunk 入口
   }), /* 返回
@@ -193,6 +195,7 @@ module.exports = {
           browserify: false, // 禁用 browserify
           requireJs: false, // 禁用 requirejs
         },
+        // loader转换文件比较费时，减少被loader处理的文件
         include: path.resolve(__dirname, 'src') // 只命中src下的文件，加快webpack检索速度
       },
       // 加载图片资源
@@ -279,6 +282,7 @@ module.exports = {
     // noParse: /jquery|chartjs/,
     // 被忽略掉的文件里不应该包含 import 、 require 、 define 等模块化语句
     // 使用函数，从 Webpack 3.0.0 开始支持
+    // （缩小文件搜索范围优化）
     noParse: (content)=> {
       // content 代表一个模块的文件路径
       // 返回 true or false
@@ -288,7 +292,7 @@ module.exports = {
 
   // 配置webpack如何找寻模块对应的文件，wp内置js模块语法解析功能，默认采用标准里的解析规则，但也可以自己配置。
   resolve: {
-    // 原路径映射为新的导入路径, 还支持 $ 符号来缩小范围到只命中以关键字结尾的导入语句：
+    // 原路径映射为新的导入路径, 还支持 $ 符号来缩小范围到只命中以关键字结尾的导入语句（缩小文件搜索范围优化，但可能会影响到tree-shaking）：
     alias: {
       '@': path.resolve(__dirname, 'src'),
       // 命中以vue结尾的导入语句 import 'vue' 会替换成import 'vue/dist/vue.esm.js'
@@ -302,18 +306,26 @@ module.exports = {
     }
     Webpack 会根据 mainFields 的配置去决定优先采用那份代码，mainFields 默认如下：
     mainFields: ['browser', 'main']
+
+    resolve.mainFields 的默认值和当前的 target 配置有关系，对应关系如下：
+      当 target 为 web 或者 webworker 时，值是 ["browser", "module", "main"]
+      当 target 为其它情况时，值是 ["module", "main"]
     
     Webpack 会按照数组里的顺序去package.json 文件里寻找，只会使用找到的第一个。
     假如你想优先采用 ES6 的那份代码，可以这样配置：
     */
-    mainFields: ['jsnext:main', 'browser', 'main'],
+    // (缩小文件搜索范围优化)mainFields 用于配置第三方模块使用哪个入口文件, 可以只使用main减少搜索次数
+    // 使用本方法优化时，你需要考虑到所有运行时依赖的第三方模块的入口文件描述字段，就算有一个模块搞错了都可能会造成构建出的代码无法正常运行。
+    mainFields: ['jsnext:main', 'browser', 'module', 'main'],
     // 导入语句没带后缀时，Webpack 会自动带上后缀后去尝试访问文件是否存在。 
-    // extensions 用于配置在尝试过程中用到的后缀列表
+    // extensions 用于配置在尝试过程中用到的后缀列表(缩小文件搜索范围优化, 导入语句尽可能带上后缀)
     extensions: ['ts', '.js', '.vue', '.json'],
 
     // 配置webpack去哪些目录下查找  第三方  模块，默认node_modules。
     // 当模块会被其他模块大量引用，其他模块分布不均，导入路径不相同，可以如下配置：只用import 'button', 相当于import '/src/components/button'
-    modules:['./src/components','node_modules'],
+    // modules:['./src/components','node_modules'],
+    // 同node.js的模块寻找机制(./node_modules, ../node_modules, ../../node_modules, ...)，所以直接使用绝对路径减少寻找
+    modules:[path.resolve(__dirname, 'node_modules')],
 
     // 配置描述第三方模块的文件名称，即 package.json 文件
     descriptionFiles: ['package.json'],
