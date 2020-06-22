@@ -367,6 +367,7 @@ module.exports = {
     // 配置是否自动注入代理客户端到将运行在页面里的 Chunk 里去，默认自动注入
     // 关闭 inline，wds将无法直接控制要开发的网页。这时它通过 iframe 的方式去运行要开发的网页，当构建完变化后的代码时通过刷新 iframe 来实现实时预览。 
     // 但这时你需要去 http://localhost:8080/webpack-dev-server/ 实时预览你的网页了
+    // https://webpack.wuhaolin.cn/4%E4%BC%98%E5%8C%96/4-5%E4%BD%BF%E7%94%A8%E8%87%AA%E5%8A%A8%E5%88%B7%E6%96%B0.html
     inline: true,
 
     // 配置使用了 HTML5 History API 的单页应用。 这类单页应用要求服务器在针对任何命中的路由时都返回一个对应的 HTML 文件，例如在访问 http://localhost/user 
@@ -485,7 +486,12 @@ module.exports = {
   watchOptions: {
     // 不监听的文件或文件夹，支持正则匹配
     // 默认为空
-    ignored: /node_modules/,
+    ignored: /node_modules/, // 优化监听文件的性能，webpack默认从入口出发找出依赖的文件并监听而不是监听目录下的所有文件
+    /* 控制浏览器刷新有三种方法：
+      借助浏览器扩展去通过浏览器提供的接口刷新，WebStorm IDE 的 LiveEdit 功能就是这样实现的。
+      往要开发的网页中注入代理客户端代码，通过代理客户端去刷新整个页面。
+      把要开发的网页装进一个 iframe 中，通过刷新 iframe 去看到最新效果。 */
+
     // 监听到变化发生后会等300ms再去执行动作，防止文件更新太快导致重新编译频率太高
     // 默认为 300ms  
     aggregateTimeout: 300,
