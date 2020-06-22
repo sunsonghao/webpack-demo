@@ -80,6 +80,12 @@ module.exports = {
     chunkFilename: '[id].js',
     // 绝对路径
     path: path.resolve(__dirname, './dist'),
+    // CDN加速
+    /* https://webpack.wuhaolin.cn/4%E4%BC%98%E5%8C%96/4-9CDN%E5%8A%A0%E9%80%9F.html
+    最核心的部分是通过 publicPath 参数设置存放静态资源的 CDN 目录 URL， 为了让不同类型的资源输出到不同的 CDN，需要分别在：
+      output.publicPath 中设置 JavaScript 的地址。
+      css-loader.publicPath 中设置被 CSS 导入的资源的的地址。
+      WebPlugin.stylePublicPath 中设置 CSS 文件的地址。 */
     publicPath: '',
     // 异步加载, 通过JSONP实现，JSONP原理动态向html插入script实现。
     // 设置异步加载标签的crossorigin属性
