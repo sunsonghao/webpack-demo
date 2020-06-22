@@ -358,9 +358,11 @@ module.exports = {
   }),
   // 显示出被替换模块的名称
   new NamedModulesPlugin(),
+  // DefinePlugin 定义的环境变量只对 Webpack 需要处理的代码有效，而不会影响 Node.js 运行时的环境变量的值。
+  // 通过 Shell 脚本的方式去定义的环境变量，例如 NODE_ENV=production webpack，Webpack 是不认识的，对 Webpack 需要处理的代码中的环境区分语句是没有作用的
   new DefinePlugin({
     'process.env': {
-      'NODE_ENV': JSON.stringify('production')
+      'NODE_ENV': JSON.stringify('production') // 用 JSON.stringify 包裹字符串的原因是环境变量的值需要是一个由双引号包裹的字符串，而 JSON.stringify('production')的值正好等于'"production"'
     }
   })
   ],
