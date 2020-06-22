@@ -1,5 +1,9 @@
 const path = require('path');
 const MiniCssTextPlugin = require('mini-css-extract-plugin');
+// 压缩代码
+/* 要在 Webpack 中接入 UglifyJS 需要通过插件的形式，目前有两个成熟的插件，分别是：
+  UglifyJsPlugin：通过封装 UglifyJS 实现压缩。
+  ParallelUglifyPlugin：多进程并行处理压缩，4-4使用ParallelUglifyPlugin 中有详细介绍 */
 const DefinePlugin = require('webpack/lib/DefinePlugin');
 const DllReferencePlugin = require('webpack/lib/DllReferencePlugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
