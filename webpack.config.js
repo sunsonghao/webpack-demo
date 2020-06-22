@@ -3,6 +3,9 @@ const MiniCssTextPlugin = require('mini-css-extract-plugin');
 const DefinePlugin = require('webpack/lib/DefinePlugin');
 const DllReferencePlugin = require('webpack/lib/DllReferencePlugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
+// https://webpack.wuhaolin.cn/4%E4%BC%98%E5%8C%96/4-6%E5%BC%80%E5%90%AF%E6%A8%A1%E5%9D%97%E7%83%AD%E6%9B%BF%E6%8D%A2.html
+// 模块热替换(Hot Module Replacement)原理是当一个源码发生变化时，只重新编译发生变化的模块，再用新输出的模块替换掉浏览器中对应的老模块
+const NamedModulesPlugin = require('webpack/lib/NamedModulesPlugin');
 // 为单页应用生成html, https://github.com/gwuhaolin/web-webpack-plugin
 const { WebPlugin, AutoWebPlugin } = require('web-webpack-plugin')
 // 管理多个单页应用
@@ -353,6 +356,8 @@ module.exports = {
     // 描述 vue 动态链接库的文件内容
     manifest: require('./dist/vue.manifest.json')
   }),
+  // 显示出被替换模块的名称
+  new NamedModulesPlugin(),
   new DefinePlugin({
     'process.env': {
       'NODE_ENV': JSON.stringify('production')
