@@ -9,7 +9,11 @@
 采用导出Function的方式，能通过js灵活的控制配置，完成一个文件实现以上要求。
 */
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+// const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
+/* 由于压缩 JavaScript 代码需要先把代码解析成用 Object 抽象表示的 AST 语法树，再去应用各种规则分析和处理 AST，导致这个过程计算量巨大，耗时非常多。
+ParallelUglifyPlugin把在4-3 使用 HappyPack中介绍过的多进程并行处理的思想也引入到代码压缩中 */
+const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin')
 
 module.exports = function (env = {}, argv) {
   console.log(env) // { production: true }, 在package.json中build:dist中配置
@@ -19,9 +23,13 @@ module.exports = function (env = {}, argv) {
 
   if (isProduction) {
     plugins.push(
+      // 使用ParallelUglifyPlugin并行压缩输出的JS
+      new ParallelUglifyPlugin({
+        // 传递给 UglifyJS 的参数
+        uglifyJs: {
       // 压缩输出的JS代码
-      new UglifyJsPlugin({
-        uglifyOptions: {
+      /* new UglifyJsPlugin({
+        uglifyOptions: { */
           // 最紧凑的输出
           beautify: false,
           // 删除所有的注释
