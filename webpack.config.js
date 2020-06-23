@@ -50,6 +50,9 @@ const autoWebPlugin = new AutoWebPlugin('./src/pages', {
   },
 })
 
+// 分侧重开发和输出质量2分配置
+// https://webpack.wuhaolin.cn/4%E4%BC%98%E5%8C%96/4-16%E4%BC%98%E5%8C%96%E6%80%BB%E7%BB%93.html
+
 // commonjs 规范,导出配置项
 module.exports = {
   mode: 'none',
