@@ -80,6 +80,9 @@ module.exports = {
     // 借助模板和变量，[id | name | hash(唯一标识id的hash) | chunkhash]
     filename: '[name].js',
     // 非入口(运行过程中产生，使用 CommonChunkPlugin、使用 import('path/to/module') 动态加载等时)chunk在输出时的文件名称
+    // import(/* webpackChunkName: "show" */ './show').then((show) => {show('Webpack');})
+    // 按需加载与vueRouter搭配 https://cn.vuejs.org/v2/guide/components-dynamic-async.html#%E5%BC%82%E6%AD%A5%E7%BB%84%E4%BB%B6
+    // https://router.vuejs.org/zh/guide/advanced/lazy-loading.html#%E6%8A%8A%E7%BB%84%E4%BB%B6%E6%8C%89%E7%BB%84%E5%88%86%E5%9D%97
     chunkFilename: '[id].js',
     // 绝对路径
     path: path.resolve(__dirname, './dist'),
