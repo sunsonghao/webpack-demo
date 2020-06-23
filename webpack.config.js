@@ -5,6 +5,9 @@ const MiniCssTextPlugin = require('mini-css-extract-plugin');
   UglifyJsPlugin：通过封装 UglifyJS 实现压缩。
   ParallelUglifyPlugin：多进程并行处理压缩，4-4使用ParallelUglifyPlugin 中有详细介绍 */
 const DefinePlugin = require('webpack/lib/DefinePlugin');
+// webpack4使用该插件优化，直接配置在optimization选项中，不用引入
+// 基础库(base)->所有页面依赖的公共业务代码(common)->每个页面的单独文件
+const CommonsChunkPlugin = require('webpack/lib/optimize/SplitChunksPlugin')
 const DllReferencePlugin = require('webpack/lib/DllReferencePlugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 // https://webpack.wuhaolin.cn/4%E4%BC%98%E5%8C%96/4-6%E5%BC%80%E5%90%AF%E6%A8%A1%E5%9D%97%E7%83%AD%E6%9B%BF%E6%8D%A2.html
@@ -154,7 +157,26 @@ module.exports = {
       */
 
   },
-
+  // https://www.cnblogs.com/xieqian/p/10973039.html
+  optimization: {
+    /* splitChunks: {
+        cacheGroups: {
+            vendor: { // 第三方文件
+                name: "vendor",
+                test: /[\\/]node_modules[\\/]/,
+                chunks: "all",
+                priority: 10 // 优先级
+            },
+            common: { // 业务公共文件
+                name: "common",
+                test: /[\\/]src[\\/]/,
+                minSize: 1024,
+                chunks: "all",
+                priority: 5
+            }
+        }
+    } */
+  },
   // module配置如何处理模块
   module: {
     // 配置模块的读取和解析规则，一组规则，告诉webpack遇到哪些文件用哪些loader加载和转换
@@ -360,6 +382,7 @@ module.exports = {
     filename: 'index.html' // 输出的 HTML 的文件名称
   }),
   // autoWebPlugin,
+
   // 告诉 Webpack 使用了哪些动态链接库, 
   // 还需要在html中导入依赖的动态链接库文件<script src="./dist/vue.dll.js"></script>
   new DllReferencePlugin({
