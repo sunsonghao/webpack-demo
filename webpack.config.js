@@ -8,6 +8,7 @@ const MiniCssTextPlugin = require('mini-css-extract-plugin');
   UglifyJsPlugin：通过封装 UglifyJS 实现压缩。
   ParallelUglifyPlugin：多进程并行处理压缩，4-4使用ParallelUglifyPlugin 中有详细介绍 */
 const DefinePlugin = require('webpack/lib/DefinePlugin');
+const ModuleConcatenationPlugin = require('webpack/lib/optimize/ModuleConcatenationPlugin');
 // webpack4使用该插件优化，直接配置在optimization选项中，不用引入
 // 基础库(base)->所有页面依赖的公共业务代码(common)->每个页面的单独文件
 const CommonsChunkPlugin = require('webpack/lib/optimize/SplitChunksPlugin')
@@ -383,6 +384,9 @@ module.exports = {
     filename: '[name].css'
   }), 
   new VueLoaderPlugin(),
+  // 实现原理其实很简单：分析出模块之间的依赖关系，尽可能的把打散的模块合并到一个函数中去，但前提是不能造成代码冗余。 因此只有那些被引用了一次的模块才能被合并。
+  // 开启 Scope Hoisting,需要分析出模块之间的依赖关系，因此源码必须采用 ES6 模块化语句，不然无法生效。 原因和4-10 使用 TreeShaking 中介绍的类似,还需要配置mainFields中js:next
+  new ModuleConcatenationPlugin(),
   new WebPlugin({
     template: './template.html', // HTML 模版文件所在的文件路径
     filename: 'index.html' // 输出的 HTML 的文件名称
