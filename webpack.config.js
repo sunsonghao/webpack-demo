@@ -1,5 +1,8 @@
 const path = require('path');
 const MiniCssTextPlugin = require('mini-css-extract-plugin');
+// Prepack 通过在编译阶段预先执行了源码得到执行结果，再直接把运行结果输出来以提升性能
+// prepack-webpack-plugin
+
 // 压缩代码
 /* 要在 Webpack 中接入 UglifyJS 需要通过插件的形式，目前有两个成熟的插件，分别是：
   UglifyJsPlugin：通过封装 UglifyJS 实现压缩。
