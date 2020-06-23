@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack --watch --devtool source-map --config webpack.config.js",
+    "//": "启动命令带上 --profile --json > stats.json，输出了一个 stats.json 文件。 这个 stats.json 文件是给可视化分析工具使用的",
+    "start": "webpack --profile --json > stats.json --watch --devtool source-map --config webpack.config.js",
     "dev": "webpack-dev-server --devtool source-map --hot --config webpack.config.js",
     "build:dist": "webpack --env.production  --config webpack.muti-config.js",
     "build:dll": "webpack --config webpack.dll.config.js"

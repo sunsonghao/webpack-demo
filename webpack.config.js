@@ -79,6 +79,7 @@ module.exports = {
   // entry: () => new Promise((resolve) => resolve(['./main.js'])), // 异步函数
 
   // https://webpack.js.org/configuration/output/
+  // 输出分析 https://www.webpackjs.com/guides/code-splitting/#bundle-%E5%88%86%E6%9E%90-bundle-analysis-
   output: {
     // filename: 'bundle.js',
     // 借助模板和变量，[id | name | hash(唯一标识id的hash) | chunkhash]
