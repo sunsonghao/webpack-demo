@@ -82,7 +82,7 @@ const five = `
       
       // 导出 Plugin
       module.exports = BasicPlugin;
-      
+
     Compiler 和 Compilation
       Compiler 对象包含了 Webpack 环境所有的的配置信息，包含 options，loaders，plugins
       Compilation 对象包含了当前的模块资源、编译生成资源、变化的文件等，| 通过 Compilation 也能读取到 Compiler 对象  |
@@ -109,4 +109,12 @@ const five = `
       修改输出资源，compilation.assets
       判断 Webpack 使用了哪些插件，compiler.options.plugins
     实战
+
+  5-5 调试 Webpack
+    https://webpack.wuhaolin.cn/5%E5%8E%9F%E7%90%86/5-5%E8%B0%83%E8%AF%95Webpack.html
+    教你如何断点调试 5-1工作原理概括 中的插件代码。 由于 Webpack 运行在 Node.js 之上，调试 Webpack 就相对于调试 Node.js 程序
+      设置断点
+      配置入口 （Node.js 的执行入口文件，为 Webpack 的执行入口文件）
+      启动调试
+      执行到断点
   `
