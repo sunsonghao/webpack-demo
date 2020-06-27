@@ -39,4 +39,28 @@ const five = `
       多了一个 webpackJsonp 函数用于从异步加载的文件中安装模块。
     在使用了 CommonsChunkPlugin 去提取公共代码时输出的文件和使用了异步加载时输出的文件是一样的，
     都会有 __webpack_require__.e 和 webpackJsonp。 原因在于提取公共代码和异步加载本质上都是代码分割。
+
+  5-3 编写loader
+    一个 Loader 的职责是单一的，只需要完成一种转换
+
+    loader基础
+      由于 Webpack 是运行在 Node.js 之上的，一个 Loader 其实就是一个 Node.js 模块，这个模块需要导出一个函数。 
+      这个导出的函数的工作就是获得处理前的原内容，对原内容执行处理后，返回处理后的内容。
+        module.exports = function (source) {
+          return source
+        }
+      由于 Loader 运行在 Node.js 中，可以调用任何 Node.js 自带的 API，或者安装第三方模块进行调用
+        const thirdModule = require('thirdModule');
+        module.exports = function(source) {
+          return thirdModule(source);
+        };
+
+    loader进阶
+      如获取用户options，参考：https://www.webpackjs.com/api/loaders/
+
+      如何加载本地loader:
+        npm link
+        webpack中resolveLoader.modules配置项修改（参考2-7节）
+    实战
+        ···
   `
