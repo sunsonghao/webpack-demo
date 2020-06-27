@@ -63,4 +63,50 @@ const five = `
         webpack中resolveLoader.modules配置项修改（参考2-7节）
     实战
         ···
+
+  5-4 编写plugin
+    https://www.webpackjs.com/api/plugins/
+    Webpack 运行的生命周期中会广播出许多事件，Plugin 可以监听这些事件，在合适的时机通过 Webpack 提供的 API 改变输出结果
+      class BasicPlugin{
+        // 在构造函数中获取用户给该插件传入的配置
+        constructor(options){
+        }
+      
+        // Webpack 会调用 BasicPlugin 实例的 apply 方法给插件实例传入 compiler 对象
+        // compiler.plugin(事件名称, 回调函数)
+        apply(compiler){
+          compiler.plugin('compilation',function(compilation) {
+          })
+        }
+      }
+      
+      // 导出 Plugin
+      module.exports = BasicPlugin;
+      
+    Compiler 和 Compilation
+      Compiler 对象包含了 Webpack 环境所有的的配置信息，包含 options，loaders，plugins
+      Compilation 对象包含了当前的模块资源、编译生成资源、变化的文件等，| 通过 Compilation 也能读取到 Compiler 对象  |
+      Compiler 和 Compilation 的区别在于：Compiler 代表了整个 Webpack 从启动到关闭的生命周期，而 Compilation 只是代表了一次新的编译。
+    
+    事件流
+      Webpack 通过 Tapable 来组织这条复杂的生产线。 Webpack 在运行过程中会广播事件，插件只需要监听它所关心的事件，就能加入到这条生产线中，去改变生产线的运作。 Webpack 的事件流机制保证了插件的有序性，使得整个系统扩展性很好。
+      Webpack 的事件流机制应用了观察者模式，和 Node.js 中的 EventEmitter 非常相似。 Compiler 和 Compilation 都继承自 Tapable，可以直接在 Compiler 和 Compilation 对象上广播和监听事件
+        compiler.apply('event-name',params); // 广播
+        compiler.plugin('event-name',function(params) { // 监听
+        });
+      compilation也有以上两个方法
+      有些事件是异步的，这些异步的事件会附带两个参数，第二个参数为回调函数，在插件处理完任务时需要调用回调函数通知 Webpack，才会进入下一处理流程
+        compiler.plugin('emit',function(compilation, callback) {
+          // 处理逻辑
+      
+          // 处理完毕后执行 callback 以通知 Webpack 
+          // 如果不执行 callback，运行流程将会一直卡在这不往下执行 
+          callback();
+        });
+    常用API
+      读取输出资源、代码块、模块及其依赖 compilation.chunks
+      监听文件变化
+      修改输出资源，compilation.assets
+      判断 Webpack 使用了哪些插件，compiler.options.plugins
+    实战
   `
